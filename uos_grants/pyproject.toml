@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uos-ai-research-system"
+description = "A system for matching queries to specific researchers at UoS"
+authors = [
+    { name = "Dr. Shaun T. E. Donnelly", email = "s.t.donnelly@sheffield.ac.uk"}
+]
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.11"
+
+dependencies = [
+    "pydantic",
+    "langchain-ollama",
+    "langchain-text-splitters",
+    "langchain-community",
+    "langgraph",
+    "langchain-openai",
+    "langchain-core",
+    "langchain-pinecone",
+    "beautifulsoup4",
+    "lancedb",
+    "chromadb",
+    "langchain-google-genai",
+    "langchain-postgres",
+    "psycopg[binary,pool]",
+    "langgraph-checkpoint-sqlite",
+    "langgraph-checkpoint-postgres",
+]
+
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "docs"]
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+line_length = 79
+known_third_party = []
+known_local_folder = "uos_grants"

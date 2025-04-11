@@ -1,0 +1,9 @@
+embedding_model:
+  name: "text-embedding-3-large"
+  provider: "openai"
+  api_key_env: "OPENAI_API_KEY"
+
+llm:
+  name: "gpt-4o-mini"
+  provider: "openai"
+  api_key_env: "OPENAI_API_KEY"

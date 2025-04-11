@@ -150,7 +150,11 @@ RUN pip3 install --no-cache-dir uv && \
     fi; \
     chown -R $UID:$GID /app/backend/data/
 
+WORKDIR /app
+COPY ./uos_grants ./uos_grants
+RUN pip install -e ./uos_grants
 
+WORKDIR /app/backend
 
 # copy embedding weight from build
 # RUN mkdir -p /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2

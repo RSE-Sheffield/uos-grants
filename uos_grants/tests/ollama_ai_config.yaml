@@ -1,0 +1,7 @@
+embedding_model:
+  name: "llama3.1"
+  provider: "ollama"
+
+llm:
+  name: "llama3.1"
+  provider: "ollama"
