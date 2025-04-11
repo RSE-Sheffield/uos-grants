@@ -16,15 +16,6 @@ services:
       - .env
     restart: unless-stopped
 
-  chroma:
-    image: chromadb/chroma:0.6.4.dev226
-    container_name: chromadb-grants
-    ports:
-      - "8000:8000"
-#    volumes:
-#      - ./data/chroma:/chroma/chroma
-    restart: unless-stopped
-
   postgres:
     image: postgres:15
     container_name: postgres-grants
