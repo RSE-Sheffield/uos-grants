@@ -1,23 +1,16 @@
 import asyncio
 import re
 from typing import Dict, List, Optional, Set
-from researchers import Researcher
 import aiohttp
 from bs4 import BeautifulSoup, element
 from langchain_core.utils.html import extract_sub_links
-from connectors.models import Researcher as ModelResearcher
-from connectors.models import StaffUrls as ModelStaffUrls
-from sqlalchemy import select
-from connectors.repository import get_or_create_researcher, update_researcher
+from .connectors.models import StaffUrls as ModelStaffUrls
 import logging
 from datetime import datetime
 import os
 from contextlib import aclosing
-import httpx
-from fake_useragent import UserAgent
-from urllib.parse import urlparse
-import time
-import random
+
+
 
 
 os.makedirs("./logs", exist_ok=True)
