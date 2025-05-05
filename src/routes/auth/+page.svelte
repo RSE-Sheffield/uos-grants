@@ -28,6 +28,8 @@
 
 	let ldapUsername = '';
 
+	let consentChecked = false;
+
 	const querystringValue = (key) => {
 		const querystring = window.location.search;
 		const urlParams = new URLSearchParams(querystring);
@@ -309,9 +311,27 @@
 											{$i18n.t('Authenticate')}
 										</button>
 									{:else}
+										{#if mode !== 'signin' && !($config?.onboarding ?? false)}
+											<div class="mb-4 flex items-start text-sm text-gray-700 dark:text-gray-300">
+												<input
+													id="privacyConsent"
+													type="checkbox"
+													bind:checked={consentChecked}
+													class="mt-1 mr-2 accent-blue-600"
+												/>
+												<label for="privacyConsent" class="leading-tight">
+													I understand that by using this platform developers will have access to my
+													chat history, feedback and notes.
+												</label>
+											</div>
+										{/if}
+
 										<button
-											class="bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-medium text-sm py-2.5"
+											class="bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-medium text-sm py-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
 											type="submit"
+											disabled={mode !== 'signin' &&
+												!($config?.onboarding ?? false) &&
+												!consentChecked}
 										>
 											{mode === 'signin'
 												? $i18n.t('Sign in')
@@ -321,13 +341,13 @@
 										</button>
 
 										{#if $config?.features.enable_signup && !($config?.onboarding ?? false)}
-											<div class=" mt-4 text-sm text-center">
+											<div class="mt-4 text-sm text-center">
 												{mode === 'signin'
 													? $i18n.t("Don't have an account?")
 													: $i18n.t('Already have an account?')}
 
 												<button
-													class=" font-medium underline"
+													class="font-medium underline"
 													type="button"
 													on:click={() => {
 														if (mode === 'signin') {
