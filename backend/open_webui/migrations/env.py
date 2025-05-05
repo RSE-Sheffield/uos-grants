@@ -8,6 +8,8 @@ from pathlib import Path
 import sys
 import os
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path="/app/backend/.env")
@@ -26,7 +28,9 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from open_webui.models.uos_notes import GrantsNote
-target_metadata = GrantsNote.metadata
+from uos_grants.connectors.models import Researcher, StaffUrls
+target_metadata = Researcher.metadata
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
