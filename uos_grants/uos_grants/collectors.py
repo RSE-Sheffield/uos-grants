@@ -1,22 +1,22 @@
 # %%
 import os
-from connectors.db import get_session
-from connectors.repository import (
+from uos_grants.connectors.db import get_session
+from uos_grants.connectors.repository import (
     create_tables,
 )  # optional, if you need to ensure the table exists
-from webloaders import AcademicDeptScraper, logger
-from researchers import Researcher
+from uos_grants.webloaders import AcademicDeptScraper, logger
+from uos_grants.researchers import Researcher
 import asyncio
 from sqlalchemy import select
-from connectors.db import get_session
-from connectors.models import (
+from uos_grants.connectors.db import get_session
+from uos_grants.connectors.models import (
     Researcher as ModelResearcher,
     StaffUrls as ModelStaffUrls,
 )
 import chromadb
 from uos_grants.embedding import BatchEmbeddingOpenAI
 from itertools import islice
-from connectors.repository import (
+from uos_grants.connectors.repository import (
     insert_staff_url,
     update_researcher,
     insert_researcher,
