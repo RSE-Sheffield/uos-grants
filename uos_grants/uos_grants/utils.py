@@ -2,6 +2,7 @@ from itertools import islice
 
 from langchain_postgres import PGVector
 from langchain_core.documents import Document
+from langchain_core.messages import trim_messages
 
 import os
 from contextlib import aclosing
@@ -26,6 +27,9 @@ from .researchers import Researcher
 from .webloaders import logger
 from typing import List, Dict, Optional
 
+import tiktoken
+
+
 def chunk_list(iterable, chunk_size=500):
     """Yield successive n-sized chunks from an iterable."""
     iterable = iter(iterable)
@@ -33,7 +37,7 @@ def chunk_list(iterable, chunk_size=500):
         yield chunk
 
 
-async def embed_researchers_to_pgvector(results):#: BatchOutput):
+async def embed_researchers_to_pgvector(results):  #: BatchOutput):
     collection_name = os.getenv(
         "VECTOR_DB_COLLECTION", "sheffield_researchers"
     )
@@ -192,6 +196,7 @@ def make_doc_from_sql(researcher: ModelResearcher) -> Document:
         metadata=metadata,
     )
 
+
 async def get_metadata_from_url_sql(url: str) -> Optional[ModelResearcher]:
     """
     Get metadata from a URL in the SQL database.
@@ -209,6 +214,7 @@ async def get_metadata_from_url_sql(url: str) -> Optional[ModelResearcher]:
         metadata_dict.pop("research_interests", None)
         return metadata_dict
 
+
 async def get_content_string_from_url_sql(url: str) -> Optional[str]:
     """
     Get content string from a URL in the SQL database.
@@ -222,3 +228,21 @@ async def get_content_string_from_url_sql(url: str) -> Optional[str]:
             return make_researcher_str(metadata)
         else:
             return None
+
+
+def count_tokens(messages):
+    """
+    Count the number of tokens in a list of messages.
+    """
+    model = os.getenv("LLM_MODEL")
+    encoding = tiktoken.encoding_for_model(model)
+    return sum(len(encoding.encode(message.content)) for message in messages)
+
+
+def trim_message_history(messages, max_tokens=128000):
+    """
+    Trim the message history to fit within the token limit.
+    """
+    return trim_messages(
+        messages, max_tokens=max_tokens, token_counter=count_tokens
+    )

@@ -9,6 +9,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 
+from langchain_core.messages.utils import (
+    trim_messages,
+    count_tokens_approximately,
+)
+
+from uos_grants.utils import trim_message_history
 
 # === LangGraph State Definition ===
 class State(TypedDict):
@@ -32,29 +38,8 @@ def agent(state: State) -> State:
 
 
 def reuse_previous_context(state: State) -> State:
-    """
-    Reuse previous context if available.
-    This function checks the state for previous AI messages that contain the word "Source:".
-
-    Args:
-        state (State): The current state of the conversation.
-
-    Returns:
-        State: The updated state with the reused context.
-    """
-    latest_human = next(
-        msg
-        for msg in reversed(state["messages"])
-        if isinstance(msg, HumanMessage)
-    )
-    context = "\n\n".join(
-        msg.content
-        for msg in state["messages"]
-        if isinstance(msg, AIMessage) and "Source:" in msg.content
-    )
     return {
-        "messages": state["messages"]
-        + [latest_human, AIMessage(content=context)],
+        "messages": state["messages"],
         "should_retrieve": False,
     }
 
@@ -86,30 +71,33 @@ def make_retriever_factory(retriever):
 
 def generate_response_factory(llm):
     def generate_response(state: State) -> State:
-        context = "\n\n".join(
-            [
-                msg.content
-                for msg in state["messages"]
-                if isinstance(msg, AIMessage) and "Source:" in msg.content
-            ]
-        )
+        # Extract most recent HumanMessage
+        state['messages'] = trim_message_history(state['messages'])
         human_msg = next(
             msg
             for msg in reversed(state["messages"])
             if isinstance(msg, HumanMessage)
         )
-        print("Human message:", human_msg.content)
 
+        # Only get the latest block of context-containing AI messages (you could optimize this)
+        context_messages = [
+            msg.content
+            for msg in state["messages"]
+            if isinstance(msg, AIMessage) and "Source:" in msg.content
+        ]
+        context = "\n\n".join(context_messages)
+
+        # Build final prompt with context injected directly
         system_content = (
             "You are an AI assistant that acts as a directory for the University of Sheffield. "
             "Based solely on the context provided, list all the people found. "
             "For each person, include their name, department, website, and contact info. "
-            "Do not make up information.\n\nContext:\n"
-            f"{context}"
+            "Do not make up information.\n\nContext:\n" + context
         )
 
         prompt = [SystemMessage(content=system_content), human_msg]
         response = llm.invoke(prompt)
+
         return {
             "messages": state["messages"] + [response],
             "should_retrieve": False,
