@@ -88,19 +88,25 @@ def generate_response_factory(llm):
         context = "\n\n".join(context_messages)
 
         # Build final prompt with context injected directly
+        #system_content = (
+        #    "You are an AI assistant that acts as a directory for the University of Sheffield."
+        #    "Based solely on the context provided, list all the people found. "
+        #    "For each person, include their name, department, website, and contact info. "
+        #    "Do not make up information.\n\nContext:\n" + context
+        #)
         system_content = (
-            "You are an AI assistant that acts as a directory for the University of Sheffield. "
-            "Based solely on the context provided, list all the people found. "
-            "For each person, include their name, department, website, and contact info. "
+            "You are an AI assistant that acts as a directory for the University of Sheffield."
+            "Based on the context provided, list all the people found. If the query is about a specific person respond to that to the best of your ability."
+            "For each person, include their name, department, website, and contact info. If you're asked to exapand on individuals do that using the context provided about them."
+            "If a query asks for your opinion, use the context provided to form one."
             "Do not make up information.\n\nContext:\n" + context
         )
-
         prompt = [SystemMessage(content=system_content), human_msg]
         response = llm.invoke(prompt)
 
         return {
             "messages": state["messages"] + [response],
-            "should_retrieve": False,
+#            "should_retrieve": False,
         }
 
     return generate_response
