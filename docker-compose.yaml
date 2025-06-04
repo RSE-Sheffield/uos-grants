@@ -30,6 +30,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    networks:
+      - shared-net
 
   vectordb:
     image: pgvector/pgvector:pg16
@@ -43,6 +45,8 @@ services:
     volumes:
       - vectordb:/var/lib/postgresql/data
     restart: unless-stopped
+    networks:
+      - shared-net
 
 volumes:
   postgres_data:
