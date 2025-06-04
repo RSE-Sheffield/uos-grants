@@ -27,7 +27,7 @@ llm = init_chat_model(
     configurable_fields={"api_key": os.getenv("GRAPH_LLM_API_KEY")},
 )
 
-researchers = glob.glob(f"{os.getenv('RESEARCHER_TXT_PATH'/*.txt")
+researchers = glob.glob(f"{os.getenv('RESEARCHER_TXT_PATH')}/*.txt")
 
 doc_texts = [Path(researcher).read_text() for researcher in researchers]
 documents = [Document(page_content=doc_text) for doc_text in doc_texts]
