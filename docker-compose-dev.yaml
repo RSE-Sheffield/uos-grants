@@ -1,4 +1,23 @@
 services:
+  frontend:
+    build:
+      context: ./
+      dockerfile: dev.Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./scripts:/app/scripts
+      - ./svelte.config.js:/app/svelte.config.js
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./vite.config.ts:/app/vite.config.ts
+
+    working_dir: /app
+    command: ["npm", "run", "dev"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   open-webui:
     build:
       context: ./
@@ -6,17 +25,15 @@ services:
     container_name: open-webui-grants
     volumes:
       - ./backend:/app/backend
-      - ./uos_grants:/app/uos_grants
       - ./src:/app/src
+      - ./uos_grants:/app/uos_grants
     ports:
-      - "80:8080"
+      - "8080:8080"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/uos_grants
     env_file:
       - .env
     restart: unless-stopped
-    networks:
-      - shared-net
 
   postgres:
     image: postgres:15
@@ -47,7 +64,3 @@ services:
 volumes:
   postgres_data:
   vectordb:
-
-networks:
-  shared-net:
-    driver: bridge

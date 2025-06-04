@@ -103,14 +103,14 @@ class Researcher:
     def profile(self) -> Optional[str]:
         profile = self.soup.find("dl", class_=re.compile("profiletext"))
         if profile:
-            return "\n\n".join(p.text.strip() for p in profile.find_all("p"))
+            return "\n".join(profile.text.strip().split("\n"))
         return None
 
     @property
     def research_interests(self) -> Optional[str]:
         ri = self.soup.find("dl", re.compile("focusresinterests"))
         if ri:
-            return "\n\n".join(p.text.strip() for p in ri.find_all("p"))
+            return "\n".join(ri.text.strip().split("\n"))
         return None
 
     @property
@@ -151,8 +151,8 @@ class Researcher:
             f"Email: {self.email}" if self.email else None,
             f"Telephone: {self.telephone}" if self.telephone else None,
             f"Address: {self.address}" if self.address else None,
-            f"Profile:\n{self.profile}" if self.profile else None,
-            f"Research Interests:\n{self.research_interests}" if self.research_interests else None,
+            f"{self.profile}" if self.profile else None,
+            f"{self.research_interests}" if self.research_interests else None,
             f"Qualifications:\n{self.qualifications}" if self.qualifications else None,
         ]
         return "\n\n".join(filter(None, fields))
