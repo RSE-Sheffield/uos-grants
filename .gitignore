@@ -1,3 +1,5 @@
+researcher_profiles2/
+
 *.jsonl
 .DS_Store
 node_modules
