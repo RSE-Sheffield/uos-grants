@@ -1,3 +1,4 @@
+neo4j_db/
 .github
 .DS_Store
 docs

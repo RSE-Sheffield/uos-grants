@@ -14,6 +14,8 @@ from langchain_experimental.graph_transformers.llm import (
     create_unstructured_prompt,
 )
 
+from node_embedding import embed_and_store_node
+
 from openai import RateLimitError
 import os
 
@@ -22,9 +24,9 @@ import glob
 import asyncio
 
 llm = init_chat_model(
-    model=os.getenv("GRAPH_LLM_API_MODEL"),
-    model_provider=os.getenv("GRAPH_LLM_PROVIDER"),
-    configurable_fields={"api_key": os.getenv("GRAPH_LLM_API_KEY")},
+    model=os.getenv("GRAPH_LLM_MODEL"),
+    provider=os.getenv("GRAPH_LLM_PROVIDER"),
+    api_key=os.getenv("GRAPH_LLM_API_KEY"),
 )
 
 researchers = glob.glob(f"{os.getenv('RESEARCHER_TXT_PATH')}/*.txt")
@@ -123,51 +125,21 @@ async def process_documents_in_chunks(transformer, documents, chunk_size=50):
                 await asyncio.sleep(60)
 
 
-# Retry wrapper for embedding + store
-async def embed_and_store_single(result, embedding_model, graph, retry_delay=60):
-    while True:
-        try:
-            embedding = await embedding_model.aembed_query(result["interest"])
-            graph.query(
-                """
-                MATCH (r)
-                WHERE elementId(r) = $node_id
-                SET r.embedding = $embedding
-                """,
-                params={
-                    "node_id": result["node_id"],
-                    "embedding": embedding,
-                },
-            )
-            return  # success
-        except Exception as e:
-            print(f"Error processing interest {result['interest']}: {e}")
-            await asyncio.sleep(retry_delay)  # back off and retry
-
-
-# Run batches concurrently
-async def embed_and_store_interests(results, embedding_model, graph, chunk_size=1000):
-    chunk_no = 0
-    for chunk in chunk_list(results, chunk_size):
-        chunk_no += 1
-        print(f"Processing chunk {chunk_no} with {len(chunk)} interests...")
-        tasks = [
-            embed_and_store_single(result, embedding_model, graph) for result in chunk
-        ]
-        await asyncio.gather(*tasks)
-        print(f"Finished processing chunk {chunk_no}.")
-
-
 # Usage
 if __name__ == "__main__":
     # Run the async function
+    graph = Neo4jGraph()
+
     asyncio.run(process_documents_in_chunks(transformer, documents))
-    asyncio.run(
-        embed_and_store_interests(
-            results=graph.query("MATCH (r:Research_interest) RETURN elementId(r) AS node_id, r.id AS interest"),
-            embedding_model=llm,
-            graph=Neo4jGraph(),
-        )
-    )
+
+    research_interests = graph.query("MATCH (r:Research_interest) RETURN elementId(r) AS node_id, r.id AS interest")
+    asyncio.run(embed_and_store_node(research_interests, "interest"))
+
+    departments = graph.query("MATCH (d:Department) RETURN elementId(d) AS node_id, d.id AS department")
+    asyncio.run(embed_and_store_node(departments, "department", chunk_size=1000))
+
+    roles = graph.query("MATCH (r:Role) RETURN elementId(r) AS node_id, r.id AS role")
+    asyncio.run(embed_and_store_node(roles, "role", chunk_size=1000))
+
 
 # %%

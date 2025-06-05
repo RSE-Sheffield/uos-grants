@@ -32,6 +32,8 @@ dependencies = [
     "langgraph-checkpoint-sqlite",
     "langgraph-checkpoint-postgres",
     "neo4j",
+    "langchain_neo4j",
+    "langchain_experimental",
 ]
 
 dynamic = ["version"]

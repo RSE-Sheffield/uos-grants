@@ -59,7 +59,9 @@ class DepartmentResearchInterestQuery(BaseModel):
 
 @tool(args_schema=ResearchInterestQuery)
 def research_interests_query(query_text, top_k=5):
-    """Query the research interests of people in the graph database."""
+    """Query the research interests of people in the graph database.
+    Use this tool when a query is about research interests or related topics.
+    """
     query_embedding = embedding_model.embed_query(query_text)
     driver = GraphDatabase.driver(
         os.getenv("NEO4J_URI"),
@@ -118,7 +120,8 @@ def research_interests_query(query_text, top_k=5):
 
 @tool(args_schema=PersonQuery)
 def get_people_by_name(person_name) -> str:
-    """Query the graph database for people by their name."""
+    """Query the graph database for people by their name.
+    Use this tool when a person's name is mentioned in the query."""
     driver = GraphDatabase.driver(
         os.getenv("NEO4J_URI"),
         auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD")),
@@ -171,7 +174,8 @@ def get_people_by_name(person_name) -> str:
 
 @tool(args_schema=PersonFullProfileQuery)
 def get_person_full_profile(person_name) -> str:
-    """Retrieve a full profile of a person from the graph database."""
+    """Retrieve a full profile of a person from the graph database.
+    Use this tool when a specific person's full profile is requested."""
 
     driver = GraphDatabase.driver(
         os.getenv("NEO4J_URI"),
@@ -207,7 +211,11 @@ def get_person_full_profile(person_name) -> str:
 def get_researchers_by_departments_and_interests(
     departments: list[str], interests: list[str], top_k: int = 10
 ) -> list[str]:
-    """Get researchers by department and vector-matched research interests."""
+    """Get researchers by department and research interest.
+    Use this only when both a department name and specific research interest are clearly provided.
+    Avoid using this if only a name or interest is mentioned.
+    Use this tool **ONLY** when a specific department and interest are provided together.
+    """
     # Step 1: Embed all interest strings
     interest_embeddings = [
         embedding_model.embed_query(interest) for interest in interests
