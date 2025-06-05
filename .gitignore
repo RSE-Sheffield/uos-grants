@@ -1,4 +1,5 @@
 researcher_profiles2/
+neo4j_db/
 
 *.jsonl
 .DS_Store

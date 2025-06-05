@@ -8,6 +8,7 @@ services:
       - ./backend:/app/backend
       - ./uos_grants:/app/uos_grants
       - ./src:/app/src
+      - ./loaders:/app/loaders
     ports:
       - "80:8080"
     environment:
@@ -15,8 +16,6 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    networks:
-      - shared-net
 
   postgres:
     image: postgres:15
@@ -30,8 +29,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
-    networks:
-      - shared-net
 
   vectordb:
     image: pgvector/pgvector:pg16
@@ -45,8 +42,6 @@ services:
     volumes:
       - vectordb:/var/lib/postgresql/data
     restart: unless-stopped
-    networks:
-      - shared-net
 
   neo4j:
     container_name: neo4j
