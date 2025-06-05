@@ -21,6 +21,7 @@ embedding_model = init_embeddings(
 
 class ResearchInterestQuery(BaseModel):
     query_text: str = Field(
+        min_length=1,
         description="The query to search for in the RAG system."
     )
     top_k: int = Field(
@@ -31,21 +32,25 @@ class ResearchInterestQuery(BaseModel):
 
 class PersonQuery(BaseModel):
     person_name: str = Field(
+        min_length=1,
         description="The name/partial name of the person to query in the graph database."
     )
 
 
 class PersonFullProfileQuery(BaseModel):
     person_name: str = Field(
+        min_length=1,
         description="The name of the person to retrieve a full profile for."
     )
 
 
 class DepartmentResearchInterestQuery(BaseModel):
     departments: list[str] = Field(
+        min_items=1,
         description="List of department names to filter researchers by."
     )
     interests: list[str] = Field(
+        min_items=1,
         description="List of research interests to filter researchers by."
     )
     top_k: int = Field(
