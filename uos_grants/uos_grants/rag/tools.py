@@ -59,7 +59,8 @@ class DepartmentResearchInterestQuery(BaseModel):
 
 @tool(args_schema=ResearchInterestQuery)
 def research_interests_query(query_text, top_k=5):
-    """Query the research interests of people in the graph database."""
+    """Query the research interests of people in the graph database.
+    Use this tool when a query is only about research interests or related topics."""
     query_embedding = embedding_model.embed_query(query_text)
     driver = GraphDatabase.driver(
         os.getenv("NEO4J_URI"),
@@ -171,8 +172,8 @@ def get_people_by_name(person_name) -> str:
 
 @tool(args_schema=PersonFullProfileQuery)
 def get_person_full_profile(person_name) -> str:
-    """Retrieve a full profile of a person from the graph database."""
-
+    """Retrieve a full profile of a person from the graph database.
+    Use this tool when a specific person's full profile is requested."""
     driver = GraphDatabase.driver(
         os.getenv("NEO4J_URI"),
         auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD")),
@@ -207,8 +208,9 @@ def get_person_full_profile(person_name) -> str:
 def get_researchers_by_departments_and_interests(
     departments: list[str], interests: list[str], top_k: int = 10
 ) -> list[str]:
-    """Get researchers by department and vector-matched research interests."""
-
+    """Get researchers by department and vector-matched research interests.
+    This tool uses two vector searches: one for departments and one for research interests.
+    Use this tool when a query asks for researchers in specific departments or schools with specific research interests."""
     # Step 1: Embed all interest and department strings
     interest_embeddings = [embedding_model.embed_query(i) for i in interests]
     department_embeddings = [
