@@ -59,9 +59,7 @@ class DepartmentResearchInterestQuery(BaseModel):
 
 @tool(args_schema=ResearchInterestQuery)
 def research_interests_query(query_text, top_k=5):
-    """Query the research interests of people in the graph database.
-    Use this tool when a query is about research interests or related topics.
-    """
+    """Query the research interests of people in the graph database."""
     query_embedding = embedding_model.embed_query(query_text)
     driver = GraphDatabase.driver(
         os.getenv("NEO4J_URI"),
@@ -120,8 +118,7 @@ def research_interests_query(query_text, top_k=5):
 
 @tool(args_schema=PersonQuery)
 def get_people_by_name(person_name) -> str:
-    """Query the graph database for people by their name.
-    Use this tool when a person's name is mentioned in the query."""
+    """Query the graph database for people by their name."""
     driver = GraphDatabase.driver(
         os.getenv("NEO4J_URI"),
         auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD")),
@@ -174,8 +171,7 @@ def get_people_by_name(person_name) -> str:
 
 @tool(args_schema=PersonFullProfileQuery)
 def get_person_full_profile(person_name) -> str:
-    """Retrieve a full profile of a person from the graph database.
-    Use this tool when a specific person's full profile is requested."""
+    """Retrieve a full profile of a person from the graph database."""
 
     driver = GraphDatabase.driver(
         os.getenv("NEO4J_URI"),
@@ -211,24 +207,27 @@ def get_person_full_profile(person_name) -> str:
 def get_researchers_by_departments_and_interests(
     departments: list[str], interests: list[str], top_k: int = 10
 ) -> list[str]:
-    """Get researchers by department and research interest.
-    Use this only when both a department name and specific research interest are clearly provided.
-    Avoid using this if only a name or interest is mentioned.
-    Use this tool **ONLY** when a specific department and interest are provided together.
-    """
-    # Step 1: Embed all interest strings
-    interest_embeddings = [
-        embedding_model.embed_query(interest) for interest in interests
+    """Get researchers by department and vector-matched research interests."""
+
+    # Step 1: Embed all interest and department strings
+    interest_embeddings = [embedding_model.embed_query(i) for i in interests]
+    department_embeddings = [
+        embedding_model.embed_query(d) for d in departments
     ]
 
-    # Step 2: Cypher with UNWIND over embeddings
+    # Step 2: Cypher query using two vector searches
     cypher = """
-    UNWIND $embeddings AS emb
-    CALL db.index.vector.queryNodes('research_interest_index', $topK, emb)
-    YIELD node AS ri, score
-    MATCH (p:Person)-[:HAS_DEPARTMENT]->(d:Department),
-          (p)-[:HAS_RESEARCH_INTEREST]->(ri)
-    WHERE any(dep IN $departments WHERE toLower(d.id) CONTAINS toLower(dep))
+    UNWIND $dept_embeddings AS dept_emb
+    CALL db.index.vector.queryNodes('department_index', $topK, dept_emb)
+    YIELD node AS dept, score AS dept_score
+
+    UNWIND $interest_embeddings AS interest_emb
+    CALL db.index.vector.queryNodes('research_interest_index', $topK, interest_emb)
+    YIELD node AS ri, score AS interest_score
+
+    MATCH (p:Person)-[:HAS_DEPARTMENT]->(dept)
+    MATCH (p)-[:HAS_RESEARCH_INTEREST]->(ri)
+
     RETURN DISTINCT p.id AS name
     """
 
@@ -241,8 +240,8 @@ def get_researchers_by_departments_and_interests(
     with driver.session() as session:
         results = session.run(
             cypher,
-            departments=departments,
-            embeddings=interest_embeddings,
-            topK=top_k,  # Can be adjusted
+            dept_embeddings=department_embeddings,
+            interest_embeddings=interest_embeddings,
+            topK=top_k,
         )
         return [record["name"] for record in results]
