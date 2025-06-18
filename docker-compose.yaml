@@ -47,6 +47,7 @@ services:
       - ./neo4j_db/logs:/logs
       - ./neo4j_db/import:/var/lib/neo4j/import
       - ./neo4j_db/plugins:/plugins
+    restart: unless-stopped
 
 volumes:
   postgres_data:

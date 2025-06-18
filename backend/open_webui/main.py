@@ -371,6 +371,8 @@ from open_webui.utils.security_headers import SecurityHeadersMiddleware
 from open_webui.tasks import stop_task, list_tasks  # Import from tasks.py
 
 from open_webui.utils.redis import get_sentinels_from_env
+from fastapi.templating import Jinja2Templates
+templates = Jinja2Templates(directory="open_webui/templates")
 
 
 if SAFE_MODE:
@@ -955,6 +957,9 @@ app.include_router(
 app.include_router(utils.router, prefix="/api/v1/utils", tags=["utils"])
 app.include_router(grants_feedback.router, prefix="/api/v1/grants_feedback", tags=["grants_feedback"])
 app.include_router(grants_notes.router, prefix="/api/v1/grants_notes", tags=["grants_notes"])
+
+from open_webui.routers import grants_feedback_ui
+app.include_router(grants_feedback_ui.router)
 
 
 try:

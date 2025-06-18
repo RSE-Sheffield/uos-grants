@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grants Feedback</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        th { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Grants Feedback</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Chat</th>
+                <th>Created At</th>
+                <th>Feedback</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in feedbacks %}
+                <tr>
+                    <td>{{ f.user_name }}</td>
+                    <td><a href="{{ f.chat_id }}" target="_blank">chat</a></td>
+                    <td>{{ f.created_at }}</td>
+                    <td>{{ f.feedback_str }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

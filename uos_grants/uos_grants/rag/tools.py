@@ -83,7 +83,7 @@ def research_interests_query(query_text, top_k=5):
     OPTIONAL MATCH (p)-[r]->(n)
 
     RETURN
-      p.id AS name,
+      DISTINCT p.id AS name,
       ri.id AS matched_interest,
       score,
       collect(DISTINCT {
@@ -133,8 +133,9 @@ def get_people_by_name(person_name) -> str:
     cypher = """
     MATCH (p:Person)
     WHERE toLower(p.id) CONTAINS toLower($person_name)
+
     OPTIONAL MATCH (p)-[r]->(n)
-    RETURN p, collect(DISTINCT {
+    RETURN DISTINCT p, collect(DISTINCT {
         rel: type(r),
         target: tail(labels(n))[0],
         value: CASE
