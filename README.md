@@ -80,7 +80,7 @@ NEO4J_PASSWORD: your_neo4j_password
 
 - Navigate to `http://localhost`
 - Enter a research-related query such as:
->>> "Which researchers work in sustainable energy?"
+> "Which researchers work in sustainable energy?"
 - Responses are generated based on:
  - Matching research interests
  - Graph traversal using relationships in the Neo4j knowledge graph.
