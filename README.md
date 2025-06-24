@@ -78,6 +78,9 @@ NEO4J_PASSWORD: your_neo4j_password
 
 ## Usage
 
+### Populating Neo4j databse
+
+### Using the UI
 - Navigate to `http://localhost`
 - Enter a research-related query such as:
     > "Which researchers work in sustainable energy?"
