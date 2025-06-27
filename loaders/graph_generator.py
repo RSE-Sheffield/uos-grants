@@ -29,7 +29,8 @@ llm = init_chat_model(
     api_key=os.getenv("GRAPH_LLM_API_KEY"),
 )
 
-researchers = glob.glob(f"{os.getenv('RESEARCHER_TXT_PATH')}/*.txt")
+# researchers = glob.glob(f"{os.getenv('RESEARCHER_TXT_PATH')}/*.txt")
+
 
 doc_texts = [Path(researcher).read_text() for researcher in researchers]
 documents = [Document(page_content=doc_text) for doc_text in doc_texts]
@@ -132,10 +133,14 @@ if __name__ == "__main__":
 
     asyncio.run(process_documents_in_chunks(transformer, documents))
 
-    research_interests = graph.query("MATCH (r:Research_interest) RETURN elementId(r) AS node_id, r.id AS interest")
+    research_interests = graph.query(
+        "MATCH (r:Research_interest) RETURN elementId(r) AS node_id, r.id AS interest"
+    )
     asyncio.run(embed_and_store_node(research_interests, "interest"))
 
-    departments = graph.query("MATCH (d:Department) RETURN elementId(d) AS node_id, d.id AS department")
+    departments = graph.query(
+        "MATCH (d:Department) RETURN elementId(d) AS node_id, d.id AS department"
+    )
     asyncio.run(embed_and_store_node(departments, "department", chunk_size=1000))
 
     roles = graph.query("MATCH (r:Role) RETURN elementId(r) AS node_id, r.id AS role")

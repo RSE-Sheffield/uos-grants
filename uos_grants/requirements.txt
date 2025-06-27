@@ -11,3 +11,5 @@ langchain-google-genai
 asyncpg
 langchain_postgres
 psycopg[binary,pool]
+apscheduler
+lxml

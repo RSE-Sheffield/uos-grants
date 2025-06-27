@@ -10,9 +10,6 @@ from datetime import datetime
 import os
 from contextlib import aclosing
 
-
-
-
 os.makedirs("./logs", exist_ok=True)
 
 start_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -33,7 +30,7 @@ class AcademicDeptScraper:
         self,
         url: str,
         db_session_factory,
-        max_depth: Optional[int] = 2,
+        max_depth: Optional[int] = 100,
         timeout: Optional[int] = 10,
         base_url: Optional[str] = None,
         headers: Optional[dict] = None,
@@ -210,6 +207,7 @@ class AcademicDeptScraper:
             )
         )
         visited.add(url)
+        print(f"Fetching {url} at depth {depth}...")
         try:
             async with session.get(url) as response:
                 if "text/html" not in response.headers["Content-Type"]:
@@ -226,8 +224,8 @@ class AcademicDeptScraper:
             if close_session:
                 await session.close()
             if self.continue_on_failure:
-                #print(f"Failed to fetch {url}: {e}")
-                #print(f"{e.__class__.__name__}")
+                # print(f"Failed to fetch {url}: {e}")
+                # print(f"{e.__class__.__name__}")
                 return []
             else:
                 raise e
@@ -306,9 +304,7 @@ class AcademicDeptScraper:
         async def process_url(url: str):
             async with semaphore:
                 try:
-                    async with aclosing(
-                        self.db_session_factory()
-                    ) as db_gen:
+                    async with aclosing(self.db_session_factory()) as db_gen:
                         async for db in db_gen:
                             async with db.begin():
                                 result = await db.execute(
@@ -321,7 +317,11 @@ class AcademicDeptScraper:
                                 if existing:
                                     logger.info(f"[UPDATE] {url}")
                                 else:
-                                    db.add(ModelStaffUrls(url=url, last_response="200"))
+                                    db.add(
+                                        ModelStaffUrls(
+                                            url=url, last_response="200"
+                                        )
+                                    )
                                     logger.info(f"[INSERT] {url}")
                             break  # Only do one iteration of the generator
                 except asyncio.TimeoutError:
@@ -359,7 +359,7 @@ class AcademicDeptScraper:
         except Exception as e:
             print(f"Error writing to file {filename}: {e}")
 
-    def load(self) -> List[str]:
+    async def load(self) -> List[str]:
         """
         Load websites recursively from the starting URL.
 
@@ -367,9 +367,7 @@ class AcademicDeptScraper:
             List[str]: List of URLs
         """
         visited = set()
-        asyncio.run(
-            self._async_get_child_links_recursive(self.url, visited)
-        )
+        await self._async_get_child_links_recursive(self.url, visited)
 
     async def run(self):
-        return asyncio.run(self.load())
+        return await self.load()

@@ -1,0 +1,14 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    libxml2-dev \
+    libxslt1-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./uos_grants ./uos_grants
+RUN pip install -r ./uos_grants/requirements.txt
+RUN pip install -e ./uos_grants
+
+CMD ["python", "-m", "uos_grants.scheduler"]
