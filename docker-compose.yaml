@@ -57,15 +57,23 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile.scraper
-    command: ["python", "-m", "uos_grants.scheduler"]
+    command: [
+      "/wait-for-it.sh", "neo4j:7687", "--timeout=60", "--",
+      "/wait-for-it.sh", "postgres:5432", "--timeout=60", "--",
+      "python", "-u", "-m", "uos_grants.scheduler"
+    ]
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/uos_grants
       CHAT_MEMORY_DB_URI: postgresql://postgres:postgres@postgres:5432/uos_grants
       NEO4J_URI: bolt://neo4j:7687
       NEO4J_USERNAME: neo4j
       NEO4J_PASSWORD: password
+    env_file:
+      - .env
     volumes:
       - ./uos_grants:/app/uos_grants
+      - ./wait-for-it.sh:/wait-for-it.sh
+      - ./logs/:/app/logs/
     depends_on:
       - postgres
       - neo4j

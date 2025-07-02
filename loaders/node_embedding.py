@@ -9,7 +9,7 @@ import asyncio
 # from dotenv import load_dotenv
 
 # load_dotenv(".env")
-
+os.environ["NEO4J_URI"] = "bolt://localhost:7687"
 driver = GraphDatabase.driver(
     os.getenv("NEO4J_URI"),
     auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD")),
@@ -66,3 +66,5 @@ async def embed_and_store_node(results, node_key, chunk_size=50):
         ]
         await asyncio.gather(*tasks)
         print(f"Finished processing chunk {chunk_no}.")
+
+# %%

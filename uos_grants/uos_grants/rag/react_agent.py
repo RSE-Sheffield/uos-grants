@@ -1,8 +1,13 @@
 from .tools import (
     research_interests_query,
-    get_people_by_name,
+    search_person_by_name,
     get_person_full_profile,
-    get_researchers_by_departments_and_interests
+    get_researchers_by_departments_and_interests,
+    scrape_url_content,
+    extract_grant_topics,
+    match_departments_to_interests,
+    get_existing_departments,
+    list_departments,
 )
 from langgraph.prebuilt import create_react_agent
 
@@ -17,9 +22,14 @@ prompt = """You are an AI assistant that acts as a grant matcher and directory f
 
 tools = [
     research_interests_query,
-    get_people_by_name,
+    search_person_by_name,
     get_person_full_profile,
-    get_researchers_by_departments_and_interests
+    get_researchers_by_departments_and_interests,
+    scrape_url_content,
+    extract_grant_topics,
+    match_departments_to_interests,
+    get_existing_departments,
+    list_departments,
 ]
 
 def get_react_agent(model, tools=tools, prompt=prompt, memory=None):

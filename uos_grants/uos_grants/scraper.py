@@ -27,7 +27,7 @@ class SiteScraper:
         self.scrape_semaphore = asyncio.Semaphore(scrape_rate)
 
         # Logger setup
-        log_dir = Path("./logs/link_collector")
+        log_dir = Path("/app/logs/link_collector")
         log_dir.mkdir(parents=True, exist_ok=True)
 
         log_filename = f"link_collector_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
