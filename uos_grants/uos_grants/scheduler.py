@@ -51,7 +51,7 @@ def ensure_neo4j_indexes():
                 ON (d.embedding)
                 OPTIONS {
                   indexConfig: {
-                    `vector.dimensions`: 1536,
+                    `vector.dimensions`: 3072,
                     `vector.similarity_function`: 'cosine'
                   }
                 }
@@ -65,7 +65,7 @@ def ensure_neo4j_indexes():
                 ON (p.embedding)
                 OPTIONS {
                   indexConfig: {
-                    `vector.dimensions`: 1536,
+                    `vector.dimensions`: 3072,
                     `vector.similarity_function`: 'cosine'
                   }
                 }
@@ -79,7 +79,7 @@ def ensure_neo4j_indexes():
                 ON (ri.embedding)
                 OPTIONS {
                   indexConfig: {
-                    `vector.dimensions`: 1536,
+                    `vector.dimensions`: 3072,
                     `vector.similarity_function`: 'cosine'
                   }
                 }
@@ -168,7 +168,7 @@ async def main():
 async def startup_sequence():
     logger.info("🚀 Running index check/migration step...")
     ensure_neo4j_indexes()
-    
+
     logger.info("🚀 Running the initial scrape job...")
     await run_scrape_and_sync()
 
