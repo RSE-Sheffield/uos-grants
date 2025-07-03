@@ -101,7 +101,7 @@ class GraphEmbedder:
         self,
         node_labels: List[str],
         node_key: str = "id",
-        chunk_size: int = 100,
+        chunk_size: int = 1000,
     ):
         for label in node_labels:
             nodes = self.fetch_nodes_without_embedding(label)
