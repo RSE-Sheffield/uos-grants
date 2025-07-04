@@ -78,7 +78,66 @@ NEO4J_PASSWORD: your_neo4j_password
 
 ## Usage
 
-### Populating Neo4j databse
+### Database and Graph Population
+The population of both the PostgreSQL and Neo4j databases is fully automated. This ensures that researcher information is regularly collected, structured, and updated without manual intervention.
+
+Initial Setup
+1. Sitemap Scraping
+The system begins by fetching the University of Sheffield sitemap. All URLs containing /people/ are extracted as candidate staff profile pages.
+
+2. Profile Extraction and Storage
+Each profile page is scraped, and the following fields are collected where available:
+
+- Full name
+
+- Contact details (email, phone, address)
+
+- School or department
+
+- Research interests
+
+- Full profile text
+
+- Last modified date (from the sitemap XML)
+
+- These are stored in a PostgreSQL database, with the last_modified timestamp used to track changes over time.
+
+3. Graph Construction in Neo4j
+After all profiles are scraped, the system builds a Neo4j graph:
+
+- A Person node is created for each staff member, with attributes like name and URL.
+
+- Related entities (e.g., School, Role, Email, Address, Telephone) are created as individual nodes and connected to the person node.
+
+- Research interests (if present) are passed to a configurable LLM to extract individual topics.
+
+- Each unique research interest is stored as a Research_Interest node and linked to the corresponding staff member(s).
+
+- The graph ensures node reuse, so duplicate schools or shared interests are only created once and reused via relationships.
+
+4. Embedding Generation
+Nodes for Person, School, and Research_Interest are embedded using a configurable embedding model. These embeddings are used for semantic search and retrieval when querying the graph.
+
+### Ongoing Updates
+To keep the data current:
+
+- The sitemap is periodically re-fetched.
+
+- For each /people/ link, the last_modified value is compared to the stored value in PostgreSQL.
+
+- If the timestamps differ:
+
+  - The profile is re-scraped.
+
+  - The corresponding Person node and its direct relationships are deleted and rebuilt in Neo4j using the same logic as the initial setup.
+
+- Updates are automatically triggered:
+
+  - On Docker Compose startup
+
+  - Periodically while the stack is running
+
+This ensures the graph remains accurate and up-to-date with minimal human intervention.
 
 ### Using the UI
 - Navigate to `http://localhost`
