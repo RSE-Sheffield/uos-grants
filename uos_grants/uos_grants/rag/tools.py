@@ -61,10 +61,64 @@ class DepartmentResearchInterestQuery(BaseModel):
     )
 
 
+class ScrapeUrlContentSchema(BaseModel):
+    url: str = Field(
+        min_length=1,
+        description="A full URL of the page to scrape content from.",
+    )
+
+
+class ExtractGrantTopicsSchema(BaseModel):
+    text: str = Field(
+        min_length=10,
+        description="The full grant call text or webpage content to extract research topics from.",
+    )
+
+
+class MatchDepartmentsToInterestsSchema(BaseModel):
+    interests: list[str] = Field(
+        min_items=1,
+        description="List of research interests to match against known departments.",
+    )
+
+
+class GetPersonFullProfileSchema(BaseModel):
+    url: str = Field(
+        min_length=1,
+        description="The URL of a person's profile page. Must be known in the graph.",
+    )
+
+
+class SearchPersonByNameSchema(BaseModel):
+    name_query: str = Field(
+        min_length=1,
+        description="The name (or partial name) of the person to search for.",
+    )
+    top_k: int = Field(
+        default=3,
+        ge=1,
+        le=20,
+        description="Maximum number of top results to return.",
+    )
+
+
+class MatchResearchersByInterestsSchema(BaseModel):
+    interests: list[str] = Field(
+        min_items=1,
+        description="A list of research interests to match researchers against.",
+    )
+    top_k: int = Field(
+        default=10,
+        ge=1,
+        le=50,
+        description="Number of top researcher matches to return.",
+    )
+
+
 # =============================RAG FUNCTIONS===================================
 
 
-@tool
+@tool(args_schema=ScrapeUrlContentSchema)
 def scrape_url_content(url: str) -> str:
     """
     Scrape the main content from a webpage URL.
@@ -97,7 +151,7 @@ def scrape_url_content(url: str) -> str:
         return f"❌ Error fetching page: {str(e)}"
 
 
-@tool
+@tool(args_schema=ExtractGrantTopicsSchema)
 def extract_grant_topics(text: str) -> list[str]:
     """
     Extract key research topics or interests from a grant call or descriptive text.
@@ -137,7 +191,7 @@ def extract_grant_topics(text: str) -> list[str]:
         return [f"❌ Failed to extract interests: {str(e)}"]
 
 
-@tool
+@tool(args_schema=MatchDepartmentsToInterestsSchema)
 def match_departments_to_interests(interests: list[str]) -> list[str]:
     """
     Match research interests to known departments in the database.
@@ -426,7 +480,7 @@ def get_researchers_by_departments_and_interests(
     return output
 
 
-@tool
+@tool(args_schema=GetPersonFullProfileSchema)
 def get_person_full_profile(url: str) -> str:
     """
     Retrieve the full live profile for a person by scraping their public webpage.
@@ -507,7 +561,7 @@ def get_person_full_profile(url: str) -> str:
         )
 
 
-@tool
+@tool(args_schema=SearchPersonByNameSchema)
 def search_person_by_name(name_query: str, top_k: int = 3) -> list[str]:
     """
     Search for a person by name using vector similarity matching.
@@ -554,7 +608,7 @@ def search_person_by_name(name_query: str, top_k: int = 3) -> list[str]:
     return output
 
 
-@tool
+@tool(args_schema=MatchResearchersByInterestsSchema)
 def match_researchers_by_interests(
     interests: list[str], top_k: int = 10
 ) -> list[str]:
