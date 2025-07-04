@@ -81,7 +81,7 @@ NEO4J_PASSWORD: your_neo4j_password
 ## Database and Graph Population
 The population of both the PostgreSQL and Neo4j databases is fully automated. This ensures that researcher information is regularly collected, structured, and updated without manual intervention.
 
-Initial Setup
+### Initial Setup
 1. Sitemap Scraping
 The system begins by fetching the University of Sheffield sitemap. All URLs containing /people/ are extracted as candidate staff profile pages.
 
