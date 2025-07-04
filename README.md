@@ -78,7 +78,7 @@ NEO4J_PASSWORD: your_neo4j_password
 
 ## Usage
 
-### Database and Graph Population
+## Database and Graph Population
 The population of both the PostgreSQL and Neo4j databases is fully automated. This ensures that researcher information is regularly collected, structured, and updated without manual intervention.
 
 Initial Setup
