@@ -41,48 +41,49 @@ import os
 
 def ensure_neo4j_indexes():
     logger.info("🔍 Checking Neo4j indexes...")
+    vector_dimensions = int(os.getenv("EMBEDDING_DIMENSIONS"))
 
     indexes_to_ensure = [
         {
             "name": "department_index",
-            "cypher": """
+            "cypher": f"""
                 CREATE VECTOR INDEX department_index
                 FOR (d:Department)
                 ON (d.embedding)
-                OPTIONS {
-                  indexConfig: {
-                    `vector.dimensions`: 3072,
+                OPTIONS {{
+                  indexConfig: {{
+                    `vector.dimensions`: {vector_dimensions},
                     `vector.similarity_function`: 'cosine'
-                  }
-                }
+                  }}
+                }}
             """,
         },
         {
             "name": "person_name_index",
-            "cypher": """
+            "cypher": f"""
                 CREATE VECTOR INDEX person_name_index
                 FOR (p:Person)
                 ON (p.embedding)
-                OPTIONS {
-                  indexConfig: {
-                    `vector.dimensions`: 3072,
+                OPTIONS {{
+                  indexConfig: {{
+                    `vector.dimensions`: {vector_dimensions},
                     `vector.similarity_function`: 'cosine'
-                  }
-                }
+                  }}
+                }}
             """,
         },
         {
             "name": "research_interest_index",
-            "cypher": """
+            "cypher": f"""
                 CREATE VECTOR INDEX research_interest_index
                 FOR (ri:Research_Interest)
                 ON (ri.embedding)
-                OPTIONS {
-                  indexConfig: {
-                    `vector.dimensions`: 3072,
+                OPTIONS {{
+                  indexConfig: {{
+                    `vector.dimensions`: {vector_dimensions},
                     `vector.similarity_function`: 'cosine'
-                  }
-                }
+                  }}
+                }}
             """,
         },
         {

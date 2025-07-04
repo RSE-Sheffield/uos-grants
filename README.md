@@ -46,7 +46,7 @@ You may also add the `-d` flag to run the stack in the background.
 You will need to configure the following environment variables according to your setup.
 
 ```
-# LLM Model Variables
+# Response model variables
 LLM_MODEL_PROVIDER=openai
 LLM_MODEL=gpt-4.1-nano-2025-04-14
 LLM_API_KEY=sk-...
@@ -61,6 +61,7 @@ EMBEDDING_MODEL_PROVIDER=openai
 EMBEDDING_MODEL_NAME=text-embedding-3-large
 EMBEDDING_DIMENSIONS=3072
 EMBEDDING_MODEL_API_KEY=sk-...
+EMBEDDING_NODES=Research_Interest, Department, Person
 ```
 
 The following environment variables are configured in the docker-compose.yaml file for the open-webui container, and should align with the setup of your postgres and neo4j setups.
@@ -147,3 +148,63 @@ This ensures the graph remains accurate and up-to-date with minimal human interv
  - Matching research interests
  - Graph traversal using relationships in the Neo4j knowledge graph.
  - Reasoning and response by the LangGraph agent powered by the configured LLM.
+
+## 🔧 Model Configuration
+
+The system supports fully configurable LLM and embedding model providers via [LangChain integrations](https://docs.langchain.com). This allows you to easily switch between providers and models depending on your use case, budget, or availability.
+
+### ✅ Supported Providers
+
+The following providers are currently supported:
+
+| Provider Key               | LangChain Integration               |
+|----------------------------|-------------------------------------|
+| `openai`                   | `langchain-openai`                  |
+| `anthropic`                | `langchain-anthropic`               |
+| `azure_openai`             | `langchain-openai`                  |
+| `azure_ai`                 | `langchain-azure-ai`                |
+| `google_vertexai`          | `langchain-google-vertexai`         |
+| `google_genai`             | `langchain-google-genai`            |
+| `bedrock`                  | `langchain-aws`                     |
+| `bedrock_converse`         | `langchain-aws`                     |
+| `cohere`                   | `langchain-cohere`                  |
+| `fireworks`                | `langchain-fireworks`               |
+| `together`                 | `langchain-together`                |
+| `mistralai`                | `langchain-mistralai`               |
+| `huggingface`              | `langchain-huggingface`            |
+| `groq`                     | `langchain-groq`                    |
+| `ollama`                   | `langchain-ollama`                  |
+| `google_anthropic_vertex`  | `langchain-google-vertexai`         |
+| `deepseek`                 | `langchain-deepseek`                |
+| `ibm`                      | `langchain-ibm`                     |
+| `nvidia`                   | `langchain-nvidia-ai-endpoints`     |
+| `xai`                      | `langchain-xai`                     |
+| `perplexity`               | `langchain-perplexity`             |
+
+### ⚙️ Model Selection
+
+Each provider supports one or more models. You can configure models by setting the appropriate model name string. For example:
+
+- To use OpenAI’s GPT-4o Mini: `gpt-4o-mini`
+- To use Google’s Gemini 2.5 Pro: `gemini-2.5-pro`
+
+Refer to the specific provider’s documentation for a full list of supported model variants.
+
+### 🔑 Authentication
+
+Your provider-specific API key should be supplied via the relevant `API_KEY` environment variable. This key is used to authenticate all model requests.
+
+### 🧠 Model Roles
+
+Three distinct models can be configured:
+
+1. **LLM Response Model**  
+   Used to generate responses to user queries.
+
+2. **Embedding Model**  
+   Generates embedding vectors for nodes and incoming queries to support semantic search and retrieval.
+
+3. **Graph Generation Model**  
+   Processes staff profile texts to extract research interests via an LLM, which are then structured into the Neo4j graph.
+
+Each model can be independently configured to use different providers and model variants.
