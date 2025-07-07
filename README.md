@@ -89,32 +89,32 @@ The system begins by fetching the University of Sheffield sitemap. All URLs cont
 2. Profile Extraction and Storage
 Each profile page is scraped, and the following fields are collected where available:
 
-- Full name
+  - Full name
 
-- Contact details (email, phone, address)
+  - Contact details (email, phone, address)
+ 
+  - School or department
 
-- School or department
+  - Research interests
 
-- Research interests
+  - Full profile text
 
-- Full profile text
+  - Last modified date (from the sitemap XML)
 
-- Last modified date (from the sitemap XML)
-
-- These are stored in a PostgreSQL database, with the last_modified timestamp used to track changes over time.
+  - These are stored in a PostgreSQL database, with the last_modified timestamp used to track changes over time.
 
 3. Graph Construction in Neo4j
 After all profiles are scraped, the system builds a Neo4j graph:
 
-- A Person node is created for each staff member, with attributes like name and URL.
+  - A Person node is created for each staff member, with attributes like name and URL.
 
-- Related entities (e.g., School, Role, Email, Address, Telephone) are created as individual nodes and connected to the person node.
+  - Related entities (e.g., School, Role, Email, Address, Telephone) are created as individual nodes and connected to the person node.
 
-- Research interests (if present) are passed to a configurable LLM to extract individual topics.
+  - Research interests (if present) are passed to a configurable LLM to extract individual topics.
 
-- Each unique research interest is stored as a Research_Interest node and linked to the corresponding staff member(s).
+  - Each unique research interest is stored as a Research_Interest node and linked to the corresponding staff member(s).
 
-- The graph ensures node reuse, so duplicate schools or shared interests are only created once and reused via relationships.
+  - The graph ensures node reuse, so duplicate schools or shared interests are only created once and reused via relationships.
 
 4. Embedding Generation
 Nodes for Person, School, and Research_Interest are embedded using a configurable embedding model. These embeddings are used for semantic search and retrieval when querying the graph.
@@ -145,9 +145,9 @@ This ensures the graph remains accurate and up-to-date with minimal human interv
 - Enter a research-related query such as:
     > "Which researchers work in sustainable energy?"
 - Responses are generated based on:
- - Matching research interests
- - Graph traversal using relationships in the Neo4j knowledge graph.
- - Reasoning and response by the LangGraph agent powered by the configured LLM.
+  - Matching research interests
+  - Graph traversal using relationships in the Neo4j knowledge graph.
+  - Reasoning and response by the LangGraph agent powered by the configured LLM.
 
 ## 🔧 Model Configuration
 
@@ -181,7 +181,7 @@ The following providers are currently supported:
 | `xai`                      | `langchain-xai`                     |
 | `perplexity`               | `langchain-perplexity`             |
 
-### ⚙️ Model Selection
+### Model Selection
 
 Each provider supports one or more models. You can configure models by setting the appropriate model name string. For example:
 
@@ -190,11 +190,11 @@ Each provider supports one or more models. You can configure models by setting t
 
 Refer to the specific provider’s documentation for a full list of supported model variants.
 
-### 🔑 Authentication
+### Authentication
 
 Your provider-specific API key should be supplied via the relevant `API_KEY` environment variable. This key is used to authenticate all model requests.
 
-### 🧠 Model Roles
+### Model Roles
 
 Three distinct models can be configured:
 
