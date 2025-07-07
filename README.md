@@ -154,7 +154,7 @@ How to interact with the system via natural language queries.
 
 - Navigate to `http://localhost`
 - Enter a research-related query such as:
-    > "Which researchers work in sustainable energy?"
+    > "Name 5 researchers who work in sustainable energy?"
 - Responses are generated based on:
   - Matching research interests
   - Graph traversal using relationships in the Neo4j knowledge graph.
