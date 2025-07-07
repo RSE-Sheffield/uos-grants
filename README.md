@@ -1,38 +1,38 @@
-# Sheffield Researcher RAG UI
+# 🧠 Sheffield Researcher RAG UI
 
 A custom fork of OpenWebUI modified to support Graph Retrieval Augmented Generation (Graph RAG) across scraped researcher profiles from the University of Sheffield.
 
 The project aims to enable natural language querying over academic profiles, providing contextual, AI driven answers to research related queries.
 
-## Features
+## ✨ Features
 
-Graph RAG: Query academic knowledge via an LLM-powered LangGraph agent
-Neo4j Knowledge Graph: Stores relationships between people, departments, and research interests
-LangGraph Integration: Intelligent routing of queries with context aware tool use
-Chat Persistence: Async PostgreSQL based chat history storage
+- **Graph RAG**: Query academic knowledge via an LLM-powered LangGraph agent  
+- **Neo4j Knowledge Graph**: Stores relationships between people, departments, and research interests  
+- **LangGraph Integration**: Intelligent routing of queries with context aware tool use  
+- **Chat Persistence**: Async PostgreSQL based chat history storage  
 
-## Tech Stack
+## 🧰 Tech Stack
 
-- Frontend: Custom fork of OpenWebUI
-- Backend: FastAPI with LangGraph agent logic
-- LLM Interface: Supports OpenAI, Ollama, and other backends
-- GraphDB: Neo4j for graph-based retrieval and reasoning
-- Async Storage: PostgreSQL with PostgresSaver for chat memory
+- **Frontend**: Custom fork of OpenWebUI  
+- **Backend**: FastAPI with LangGraph agent logic  
+- **LLM Interface**: Supports OpenAI, Ollama, and other backends  
+- **GraphDB**: Neo4j for graph-based retrieval and reasoning  
+- **Async Storage**: PostgreSQL with PostgresSaver for chat memory  
 
-## Getting Started
+## 🚀 Getting Started
 
-1. Clone the repository
+1. **Clone the repository**
 ```
 git clone git@github.com:RSE-Sheffield/uos-grants.git
 cd uos-grants
 ```
 
-2. Set Up Environment
+2. **Set Up Environment**
 ```
 cp .env.example .env
 ```
 
-3. Start with Docker Compose
+3. **Start with Docker Compose**
 ```
 docker compose up --build
 ```
@@ -42,8 +42,9 @@ docker-compose up --build
 ```
 You may also add the `-d` flag to run the stack in the background.
 
-## Environment Variables
-You will need to configure the following environment variables according to your setup.
+## ⚙️ Environment Variables
+
+Environment variables needed to configure response generation, embedding, and database connection.
 
 ```
 # Response model variables
@@ -77,12 +78,16 @@ NEO4J_USERNAME: neo4j
 NEO4J_PASSWORD: your_neo4j_password
 ```
 
-## Usage
+# 🧪 Usage
 
-## Database and Graph Population
+## 🗃️ Database and Graph Population
+How profiles are fetched, stored in PostgreSQL, and used to build the Neo4j graph.
+
 The population of both the PostgreSQL and Neo4j databases is fully automated. This ensures that researcher information is regularly collected, structured, and updated without manual intervention.
 
-### Initial Setup
+### 🏗️ Initial Setup
+Steps to scrape data, extract structured information, and build the graph.
+
 1. Sitemap Scraping
 The system begins by fetching the University of Sheffield sitemap. All URLs containing /people/ are extracted as candidate staff profile pages.
 
@@ -119,7 +124,10 @@ After all profiles are scraped, the system builds a Neo4j graph:
 4. Embedding Generation
 Nodes for Person, School, and Research_Interest are embedded using a configurable embedding model. These embeddings are used for semantic search and retrieval when querying the graph.
 
-### Ongoing Updates
+### 🔄 Ongoing Updates
+
+How the system stays up-to-date with periodic re-scraping and graph updates.
+Z
 To keep the data current:
 
 - The sitemap is periodically re-fetched.
@@ -140,7 +148,10 @@ To keep the data current:
 
 This ensures the graph remains accurate and up-to-date with minimal human intervention.
 
-### Using the UI
+### 🧑‍💻 Using the UI
+
+How to interact with the system via natural language queries.
+
 - Navigate to `http://localhost`
 - Enter a research-related query such as:
     > "Which researchers work in sustainable energy?"
@@ -149,11 +160,15 @@ This ensures the graph remains accurate and up-to-date with minimal human interv
   - Graph traversal using relationships in the Neo4j knowledge graph.
   - Reasoning and response by the LangGraph agent powered by the configured LLM.
 
-## 🔧 Model Configuration
+## 🛠️ Model Configuration
+
+Explanation of configurable LLMs and embedding providers using LangChain.
 
 The system supports fully configurable LLM and embedding model providers via [LangChain integrations](https://docs.langchain.com). This allows you to easily switch between providers and models depending on your use case, budget, or availability.
 
-### ✅ Supported Providers
+### 🧾 Supported Providers
+
+Table of all compatible providers and their LangChain integration keys.
 
 The following providers are currently supported:
 
@@ -181,7 +196,9 @@ The following providers are currently supported:
 | `xai`                      | `langchain-xai`                     |
 | `perplexity`               | `langchain-perplexity`             |
 
-### Model Selection
+### 🎯 Model Selection
+
+How to choose specific models for your use case.
 
 Each provider supports one or more models. You can configure models by setting the appropriate model name string. For example:
 
@@ -190,11 +207,15 @@ Each provider supports one or more models. You can configure models by setting t
 
 Refer to the specific provider’s documentation for a full list of supported model variants.
 
-### Authentication
+### 🔐 Authentication
+
+How to securely provide API keys for model access.
 
 Your provider-specific API key should be supplied via the relevant `API_KEY` environment variable. This key is used to authenticate all model requests.
 
-### Model Roles
+### 🧩 Model Roles
+
+Defines the distinct responsibilities of each model:
 
 Three distinct models can be configured:
 
