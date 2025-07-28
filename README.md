@@ -127,7 +127,7 @@ Nodes for Person, School, and Research_Interest are embedded using a configurabl
 ### 🔄 Ongoing Updates
 
 How the system stays up-to-date with periodic re-scraping and graph updates.
-Z
+
 To keep the data current:
 
 - The sitemap is periodically re-fetched.
@@ -152,7 +152,7 @@ This ensures the graph remains accurate and up-to-date with minimal human interv
 
 How to interact with the system via natural language queries.
 
-- Navigate to `http://localhost`
+- Navigate to `http://localhost` or the URL of the host platform.
 - Enter a research-related query such as:
     > "Name 5 researchers who work in sustainable energy?"
 - Responses are generated based on:
